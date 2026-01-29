@@ -2,6 +2,7 @@ package com.astral.server;
 
 import com.astral.server.commands.CommandRegistry;
 import com.astral.server.events.EventRegistry;
+import com.astral.server.ui.ServersStatusService;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
@@ -25,11 +26,13 @@ public final class Main extends JavaPlugin {
 
     @Override
     protected void start() {
+        ServersStatusService.start();
         getLogger().atInfo().log("Loaded");
     }
 
     @Override
     protected void shutdown() {
+        ServersStatusService.stop();
         getLogger().atInfo().log("Bye Bye");
     }
 

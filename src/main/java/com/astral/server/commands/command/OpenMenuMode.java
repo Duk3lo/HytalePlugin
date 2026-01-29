@@ -1,6 +1,7 @@
 package com.astral.server.commands.command;
 
 import com.astral.server.ui.ServerMenu;
+import com.astral.server.ui.ServersStatusService;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -28,6 +29,7 @@ public final class OpenMenuMode extends AbstractPlayerCommand {
                            @NonNullDecl World world) {
         Player player = store.getComponent(ref, Player.getComponentType());
         ServerMenu page = new ServerMenu(playerRef);
+        ServersStatusService.addMenu(playerRef.getUuid(), page);
         Objects.requireNonNull(player).getPageManager().openCustomPage(ref, store, page);
     }
 }

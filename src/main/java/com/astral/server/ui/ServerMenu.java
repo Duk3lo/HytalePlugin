@@ -22,8 +22,6 @@ import javax.annotation.Nonnull;
 
 public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEventData> {
 
-
-
     public static class MenuEventData {
         public String action;
         public static final BuilderCodec<MenuEventData> CODEC =
@@ -100,5 +98,8 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         }
     }
 
+    @Override
+    protected void close() {
 
     }
+}

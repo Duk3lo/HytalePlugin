@@ -1,0 +1,8 @@
+{
+  "Group": "Astral",
+  "Name": "Hytale_Plugin",
+  "Version": "0.0.1",
+  "Main": "com.astral.server.Main",
+  "DisabledByDefault": false,
+  "IncludesAssetPack": true
+}

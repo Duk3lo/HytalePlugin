@@ -1,0 +1,185 @@
+@CloseButtonStyle = TextButtonStyle(
+    Default: (Background: #2b3542, LabelStyle: (FontSize: 11, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Hovered: (Background: #3b4552, LabelStyle: (FontSize: 11, TextColor: #b6c9de, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Pressed: (Background: #1b2532, LabelStyle: (FontSize: 11, TextColor: #96a9be, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
+);
+
+@GameModeButtonStyle = TextButtonStyle(
+    Default: (Background: #4a2b7a, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Hovered: (Background: #5f3b9e, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+    Pressed: (Background: #3a1f5f, LabelStyle: (FontSize: 10, TextColor: #e0d7ff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
+);
+
+
+
+@LumIzq = PatchStyle(TexturePath: "assets/lummen.png");
+@LumDer = PatchStyle(TexturePath: "assets/menu.png");
+Group {
+    Anchor: (Width: 500, Height: 320);
+    LayoutMode: Left;
+
+    Group #LeftPanel {
+        Anchor: (Width: 150);
+        Background: @LumIzq;
+        LayoutMode: Top;
+        Padding: (Full: 16);
+
+        Label {
+            Text: "Astral";
+            Anchor: (Height: 25);
+            Style: (FontSize: 11, TextColor: #4a5568, RenderUppercase: true, LetterSpacing: 2);
+        }
+
+        Group { Anchor: (Height: 8); }
+
+        Label {
+            Text: "Servidor ";
+            Anchor: (Height: 30);
+            Style: (FontSize: 14, TextColor: #ffffff, RenderBold: true);
+        }
+
+        Label {
+            Text: "Servidor Astral es";
+            Anchor: (Height: 15);
+            Style: (FontSize: 12, TextColor: #6e7da1);
+        }
+
+        Label {
+            Text: "un servidor abierto,";
+            Anchor: (Height: 15);
+            Style: (FontSize: 12, TextColor: #6e7da1);
+        }
+
+        Label {
+            Text: "aun en Desarrollo";
+            Anchor: (Height: 15);
+            Style: (FontSize: 12, TextColor: #6e7da1);
+        }
+
+        Label {
+            Text: "pero muy pronto";
+            Anchor: (Height: 15);
+            Style: (FontSize: 12, TextColor: #6e7da1);
+        }
+
+        Label {
+            Text: "con muchos modos";
+            Anchor: (Height: 15);
+            Style: (FontSize: 12, TextColor: #6e7da1);
+        }
+
+        Label {
+            Text: "de juegos";
+            Anchor: (Height: 15);
+            Style: (FontSize: 12, TextColor: #6e7da1);
+        }
+    }
+
+    Group #RightPanel {
+        FlexWeight: 1;
+        Background: @LumDer;
+        LayoutMode: Top;
+        Padding: (Full: 20);
+
+        Label {
+            Text: "Lumineria";
+            Anchor: (Height: 40);
+            Style: (FontSize: 22, TextColor: #ffffff, RenderBold: true);
+        }
+
+        Group {
+            Anchor: (Height: 1);
+            Background: #2b3542;
+        }
+
+        Group { Anchor: (Height: 16); }
+
+        Label {
+            Text: "Modos de Juego:";
+            Anchor: (Height: 25);
+            Style: (FontSize: 13, TextColor: #6e7da1);
+        }
+
+        Group { Anchor: (Height: 8); }
+
+        Group #Modes {
+            LayoutMode: Top;
+            Anchor: (Height: 180);
+
+            Group {
+                LayoutMode: Center;
+                Anchor: (Height: 40);
+
+                TextButton #Vanilla {
+                    Text: "Vanilla";
+                    Anchor: (Width: 85, Height: 36);
+                    Style: @GameModeButtonStyle;
+                }
+
+                Group { Anchor: (Width: 8); }
+
+                TextButton #BedWars {
+                    Text: "BedWars - WIP";
+                    Anchor: (Width: 85, Height: 36);
+                    Style: @GameModeButtonStyle;
+                }
+            }
+
+            Group { Anchor: (Height: 8); }
+
+            Group {
+                LayoutMode: Center;
+                Anchor: (Height: 40);
+
+                TextButton #SkyWars {
+                    Text: "SkyWars - WIP";
+                    Anchor: (Width: 85, Height: 36);
+                    Style: @GameModeButtonStyle;
+                }
+
+                Group { Anchor: (Width: 8); }
+
+                TextButton #Parkour {
+                    Text: "Parkour - WIP";
+                    Anchor: (Width: 85, Height: 36);
+                    Style: @GameModeButtonStyle;
+                }
+            }
+
+            Group { Anchor: (Height: 8); }
+
+            Group {
+                LayoutMode: Center;
+                Anchor: (Height: 40);
+
+                TextButton #PvP {
+                    Text: "PvP - WIP";
+                    Anchor: (Width: 85, Height: 36);
+                    Style: @GameModeButtonStyle;
+                }
+
+                Group { Anchor: (Width: 8); }
+
+                TextButton #Eventos {
+                    Text: "Eventos - WIP";
+                    Anchor: (Width: 85, Height: 36);
+                    Style: @GameModeButtonStyle;
+                }
+            }
+        }
+
+
+        Group { FlexWeight: 1; }
+
+        Group {
+            LayoutMode: Right;
+            Anchor: (Height: 15);
+
+            TextButton #CloseButton {
+                Text: "Volver";
+                Anchor: (Width: 100, Height: 36);
+                Style: @CloseButtonStyle;
+            }
+        }
+    }
+}

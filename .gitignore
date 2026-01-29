@@ -7,7 +7,6 @@ build/
 
 ### Librerías grandes (Hytale) ###
 libs/*.jar
-server/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml

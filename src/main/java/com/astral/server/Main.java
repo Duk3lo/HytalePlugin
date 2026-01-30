@@ -26,13 +26,11 @@ public final class Main extends JavaPlugin {
 
     @Override
     protected void start() {
-        ServersStatusService.start();
         getLogger().atInfo().log("Loaded");
     }
 
     @Override
     protected void shutdown() {
-        ServersStatusService.stop();
         getLogger().atInfo().log("Bye Bye");
     }
 

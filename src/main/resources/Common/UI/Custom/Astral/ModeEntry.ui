@@ -1,0 +1,32 @@
+@GameModeButtonStyle = TextButtonStyle(
+  Default: (Background: #4a2b7a, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Hovered: (Background: #5f3b9e, LabelStyle: (FontSize: 10, TextColor: #ffffff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center)),
+  Pressed: (Background: #3a1f5f, LabelStyle: (FontSize: 10, TextColor: #e0d7ff, RenderBold: true, HorizontalAlignment: Center, VerticalAlignment: Center))
+);
+
+Group {
+
+  LayoutMode: Top;
+  Anchor: (Width: 160, Height: 50);
+  Padding: (Full: 6);
+  Background: #1f2633;
+
+  Label #Stat {
+    Text: "Desconocido";
+    Style: (FontSize: 8, TextColor: #848887, HorizontalAlignment: Center);
+  }
+
+  Label #Count {
+    Text: "null";
+    Style: (FontSize: 8, TextColor: #848887, RenderUppercase: true, LetterSpacing: 2, HorizontalAlignment: Center);
+  }
+
+  Group { Anchor: (Height: 1); }
+
+  TextButton #ModeButton {
+    Text: "MODE";
+    Anchor: (Width: 150, Height: 15);
+    Style: @GameModeButtonStyle;
+  }
+}
+

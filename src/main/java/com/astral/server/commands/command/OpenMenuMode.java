@@ -12,6 +12,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class OpenMenuMode extends AbstractPlayerCommand {
@@ -28,8 +29,7 @@ public final class OpenMenuMode extends AbstractPlayerCommand {
                            @NonNullDecl PlayerRef playerRef,
                            @NonNullDecl World world) {
         Player player = store.getComponent(ref, Player.getComponentType());
-        ServerMenu page = new ServerMenu(playerRef);
-        ServersStatusService.addMenu(playerRef.getUuid(), page);
+        ServerMenu page = new ServerMenu(playerRef, List.of("Vanilla"));
         Objects.requireNonNull(player).getPageManager().openCustomPage(ref, store, page);
     }
 }

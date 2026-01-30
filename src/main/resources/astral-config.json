@@ -1,0 +1,29 @@
+{
+  "Join": {
+    "enable": true,
+    "top_message": "Bienvenido al servidor",
+    "bottom_message": "Astral"
+  },
+  "Menu_Lobby": {
+    "redis": {
+      "enabled": false
+    },
+    "servers": {
+      "Vanilla": {
+        "name": "Vanilla",
+        "online": {
+          "text": "Activo",
+          "color": "#00FF00",
+          "count_color": "#FFFFFF",
+          "format_count": "$actual / $max"
+        },
+        "offline": {
+          "text": "Inactivo",
+          "color": "#FF0000",
+          "count_color": "#777777",
+          "text_count": null
+        }
+      }
+    }
+  }
+}

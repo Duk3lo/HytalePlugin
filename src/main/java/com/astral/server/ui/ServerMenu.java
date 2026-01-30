@@ -83,6 +83,31 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         );
     }
 
+    public void reloadModes(Collection<String> newModes) {
+        this.modes.clear();
+        this.modes.addAll(newModes);
+        this.modeIndex.clear();
+
+        UICommandBuilder ui = new UICommandBuilder();
+        ui.clear("#Display");
+
+        int i = 0;
+        for (String mode : modes) {
+            ui.append("#Display", "Astral/ModeEntry.ui");
+            String selector = "#Display[" + i + "]";
+
+            ui.set(selector + " #ModeButton.Text", mode);
+            ui.set(selector + " #Stat.Text", "Jugadores");
+            ui.set(selector + " #Count.Text", "0/0");
+
+            modeIndex.put(mode, i);
+            i++;
+        }
+
+
+        sendUpdate(ui, true);
+    }
+
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref,
                                 @Nonnull Store<EntityStore> store,

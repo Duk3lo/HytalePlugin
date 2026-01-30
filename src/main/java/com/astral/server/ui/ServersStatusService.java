@@ -18,6 +18,10 @@ public final class ServersStatusService {
     private ServersStatusService() {
     }
 
+    public static Map<UUID, ServerMenu> getMenus() {
+        return menus;
+    }
+
     public static synchronized void addMenu(UUID uuid, ServerMenu menu) {
         menus.put(uuid, menu);
 

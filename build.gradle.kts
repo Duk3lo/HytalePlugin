@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly(files("/libs/BetterScoreBoard-1.7.1.jar"))
     compileOnly(files("/libs/HytaleServer.jar"))
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

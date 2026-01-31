@@ -1,36 +1,45 @@
 package com.astral.server.commands.command;
 
+import com.astral.server.Main;
 import com.astral.server.ui.ServerMenu;
 import com.astral.server.ui.ServersStatusService;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
-import com.hypixel.hytale.server.core.command.system.CommandSender;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public final class ReloadModesCommand extends AbstractCommand {
+public final class ReloadPlugin extends AbstractCommand {
 
-    public ReloadModesCommand(@NonNullDecl String name, @NonNullDecl String description, boolean requiresConfirmation) {
+    public ReloadPlugin(@NonNullDecl String name,
+                        @NonNullDecl String description,
+                        boolean requiresConfirmation) {
         super(name, description, requiresConfirmation);
     }
 
     @NonNullDecl
     @Override
-    protected  CompletableFuture<Void> execute(@NonNullDecl CommandContext commandContext) {
-        List<String> modes = List.of(
-                "Vanilla",
-                "SkyWars",
-                "Parkour",
-                "PvP"
-        );
+    protected CompletableFuture<Void> execute(@NonNullDecl CommandContext ctx) {
+
+        Main plugin = Main.getInstance();
+
+        plugin.reloadPluginConfig();
+        List<String> modes = plugin.getPluginConfig()
+                .getMenuLobby()
+                .getServers()
+                .keySet()
+                .stream()
+                .toList();
+
         for (ServerMenu menu : ServersStatusService.getMenus().values()) {
             menu.reloadModes(modes);
         }
-        CommandSender sender = commandContext.sender();
-        sender.sendMessage(Message.raw("§aMenús actualizados correctamente"));
+
+        ctx.sender().sendMessage(
+                Message.raw("§aConfiguración y menús recargados correctamente")
+        );
 
         return CompletableFuture.completedFuture(null);
     }

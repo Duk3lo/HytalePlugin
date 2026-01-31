@@ -1,5 +1,7 @@
 package com.astral.server.ui;
 
+import com.astral.server.Main;
+import com.astral.server.config.PluginConfig;
 import com.hypixel.hytale.codec.Codec;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
@@ -18,7 +20,6 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEventData> {
@@ -28,18 +29,17 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
 
     public static class MenuEventData {
         public String action;
+
         public static final BuilderCodec<MenuEventData> CODEC =
                 BuilderCodec.builder(MenuEventData.class, MenuEventData::new)
-                        .append(
-                                new KeyedCodec<>("Action", Codec.STRING),
-                                (data, value) -> data.action = value,
-                                data -> data.action
-                        )
+                        .append(new KeyedCodec<>("Action", Codec.STRING),
+                                (d, v) -> d.action = v,
+                                d -> d.action)
                         .add()
                         .build();
     }
 
-    public ServerMenu(@NonNullDecl PlayerRef playerRef, Collection<String> modes) {
+    public ServerMenu(PlayerRef playerRef, Collection<String> modes) {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, MenuEventData.CODEC);
         this.modes = new ArrayList<>(modes);
         ServersStatusService.addMenu(playerRef.getUuid(), this);
@@ -51,6 +51,9 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
                       @NonNullDecl UIEventBuilder events,
                       @NonNullDecl Store<EntityStore> store) {
 
+        PluginConfig config = Main.getInstance().getPluginConfig();
+        PluginConfig.StatusInfo offline = config.getMenuLobby().getStatus().getOffline();
+
         ui.append("Astral/Menu.ui");
         ui.clear("#Display");
 
@@ -58,17 +61,18 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         for (String mode : modes) {
 
             ui.append("#Display", "Astral/ModeEntry.ui");
-            String selector = "#Display[" + i + "]";
+            String base = "#Display[" + i + "]";
 
-            ui.set(selector + " #ModeButton.Text", mode);
-            ui.set(selector + " #Stat.Text", "Jugadores");
-            ui.set(selector + " #Count.Text", "0/0");
+            ui.set(base + " #ModeButton.Text", mode);
+            ui.set(base + " #Stat.Text", offline.getText());
+            ui.set(base + " #Stat.Text", offline.getText());
+            ui.set(base + " #Count.Text", "");
 
             modeIndex.put(mode, i);
 
             events.addEventBinding(
                     CustomUIEventBindingType.Activating,
-                    selector + " #ModeButton",
+                    base + " #ModeButton",
                     new EventData().append("Action", mode),
                     false
             );
@@ -83,78 +87,84 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         );
     }
 
+    public void updateMode(String mode, boolean online, int actual, int max) {
+        Integer idx = modeIndex.get(mode);
+        if (idx == null) return;
+
+        PluginConfig config = Main.getInstance().getPluginConfig();
+        PluginConfig.StatusInfo info = online
+                ? config.getMenuLobby().getStatus().getOnline()
+                : config.getMenuLobby().getStatus().getOffline();
+
+        UICommandBuilder ui = new UICommandBuilder();
+        String base = "#Display[" + idx + "]";
+
+        ui.set(base + " #Stat.Text", info.getText());
+
+        if (info.getFormatCount() != null) {
+            String count = info.getFormatCount()
+                    .replace("$actual", String.valueOf(actual))
+                    .replace("$max", String.valueOf(max));
+            ui.set(base + " #Count.Text", count);
+        }
+
+        sendUpdate(ui, false);
+    }
+
+
+
+    @Override
+    public void handleDataEvent(@NonNullDecl Ref<EntityStore> ref,
+                                @NonNullDecl Store<EntityStore> store,
+                                @NonNullDecl MenuEventData data) {
+
+        Player player = store.getComponent(ref, Player.getComponentType());
+        if (player == null || data.action == null) return;
+
+        if ("CloseButton".equals(data.action)) {
+            player.getPageManager().setPage(ref, store, Page.None);
+            return;
+        }
+
+        player.sendMessage(Message.raw(data.action + " está en desarrollo"));
+    }
+
+    @Override
+    public void onDismiss(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Store<EntityStore> store) {
+        PlayerRef player = store.getComponent(ref, PlayerRef.getComponentType());
+        if (player != null) {
+            ServersStatusService.removeMenu(player.getUuid());
+        }
+    }
+
     public void reloadModes(Collection<String> newModes) {
+
         this.modes.clear();
         this.modes.addAll(newModes);
+
         this.modeIndex.clear();
+
+        PluginConfig config = Main.getInstance().getPluginConfig();
+        PluginConfig.StatusInfo offline = config.getMenuLobby().getStatus().getOffline();
 
         UICommandBuilder ui = new UICommandBuilder();
         ui.clear("#Display");
 
         int i = 0;
         for (String mode : modes) {
-            ui.append("#Display", "Astral/ModeEntry.ui");
-            String selector = "#Display[" + i + "]";
 
-            ui.set(selector + " #ModeButton.Text", mode);
-            ui.set(selector + " #Stat.Text", "Jugadores");
-            ui.set(selector + " #Count.Text", "0/0");
+            ui.append("#Display", "Astral/ModeEntry.ui");
+            String base = "#Display[" + i + "]";
+
+            ui.set(base + " #ModeButton.Text", mode);
+            ui.set(base + " #Stat.Text", offline.getText());
+            ui.set(base + " #Count.Text", "");
 
             modeIndex.put(mode, i);
             i++;
         }
 
-
         sendUpdate(ui, true);
     }
 
-    @Override
-    public void handleDataEvent(@Nonnull Ref<EntityStore> ref,
-                                @Nonnull Store<EntityStore> store,
-                                @Nonnull MenuEventData data) {
-        super.handleDataEvent(ref, store, data);
-
-        Player player = store.getComponent(ref, Player.getComponentType());
-        if (player == null) return;
-
-        String act = data.action;
-        if (act == null) return;
-
-        if ("CloseButton".equals(act)) {
-            player.getPageManager().setPage(ref, store, Page.None);
-            return;
-        }
-
-        player.sendMessage(Message.raw(act + " está en desarrollo (WIP)"));
-    }
-
-    public void updateMode(
-            String modeName,
-            String statText,
-            String countText
-    ) {
-        Integer idx = modeIndex.get(modeName);
-        if (idx == null) return;
-
-        UICommandBuilder builder = new UICommandBuilder();
-        String base = "#Display[" + idx + "]";
-
-        if (countText != null) {
-            builder.set(base + " #Count.Text", countText);
-        }
-
-        if (statText != null) {
-            builder.set(base + " #Stat.Text", statText);
-        }
-
-        sendUpdate(builder, false);
-    }
-
-    @Override
-    public void onDismiss(@NonNullDecl Ref<EntityStore> ref, @NonNullDecl Store<EntityStore> store) {
-        super.onDismiss(ref, store);
-        final PlayerRef player = store.getComponent(ref, PlayerRef.getComponentType());
-        if (player == null) return;
-        ServersStatusService.removeMenu(player.getUuid());
-    }
 }

@@ -1,7 +1,8 @@
 package com.astral.server.commands.command;
 
+import com.astral.server.Main;
+import com.astral.server.config.PluginConfig;
 import com.astral.server.ui.ServerMenu;
-import com.astral.server.ui.ServersStatusService;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -13,7 +14,6 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.List;
-import java.util.Objects;
 
 public final class OpenMenuMode extends AbstractPlayerCommand {
 
@@ -22,14 +22,24 @@ public final class OpenMenuMode extends AbstractPlayerCommand {
         super(name, description, requiresConfirmation);
     }
 
-    @Override
-    protected void execute(@NonNullDecl CommandContext commandContext,
-                           @NonNullDecl Store<EntityStore> store,
-                           @NonNullDecl Ref<EntityStore> ref,
-                           @NonNullDecl PlayerRef playerRef,
-                           @NonNullDecl World world) {
+    protected void execute(
+            @NonNullDecl CommandContext ctx,
+            @NonNullDecl Store<EntityStore> store,
+            @NonNullDecl Ref<EntityStore> ref,
+            @NonNullDecl PlayerRef playerRef,
+            @NonNullDecl World world
+    ) {
         Player player = store.getComponent(ref, Player.getComponentType());
-        ServerMenu page = new ServerMenu(playerRef, List.of("Vanilla"));
-        Objects.requireNonNull(player).getPageManager().openCustomPage(ref, store, page);
+        if (player == null) return;
+
+        PluginConfig config = Main.getInstance().getPluginConfig();
+
+        List<String> modes = config.getMenuLobby()
+                .getServers()
+                .keySet()
+                .stream()
+                .toList();
+        ServerMenu menu = new ServerMenu(playerRef, modes);
+        player.getPageManager().openCustomPage(ref, store, menu);
     }
 }

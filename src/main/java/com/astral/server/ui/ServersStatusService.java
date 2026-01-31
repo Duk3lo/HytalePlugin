@@ -1,5 +1,7 @@
 package com.astral.server.ui;
 
+import com.astral.server.Main;
+import com.astral.server.config.PluginConfig;
 import com.hypixel.hytale.server.core.HytaleServer;
 
 import java.util.Map;
@@ -58,13 +60,19 @@ public final class ServersStatusService {
         }
     }
 
+
+
     private static void update() {
-        if (menus.isEmpty()) {
-            return;
-        }
-        System.out.println("task");
+        if (menus.isEmpty()) return;
+
+        // ejemplo: usar siempre "online" y contar con menuCounter
+        PluginConfig config = Main.getInstance().getPluginConfig();
+        PluginConfig.StatusInfo online = config.getMenuLobby().getStatus().getOnline();
+        int actual = menuCounter.incrementAndGet();
+        int max = 100;
+
         for (ServerMenu menu : menus.values()) {
-            menu.updateMode("Vanilla", "Prueba esto",String.valueOf(menuCounter.incrementAndGet()));
+            menu.updateMode("Vanilla", true ,actual, max);
         }
     }
 }

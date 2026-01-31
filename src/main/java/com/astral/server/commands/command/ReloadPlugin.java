@@ -38,7 +38,7 @@ public final class ReloadPlugin extends AbstractCommand {
         }
 
         ctx.sender().sendMessage(
-                Message.raw("§aConfiguración y menús recargados correctamente")
+                Message.raw("Configuración y menús recargados correctamente")
         );
 
         return CompletableFuture.completedFuture(null);

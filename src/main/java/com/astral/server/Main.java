@@ -26,11 +26,10 @@ public final class Main extends JavaPlugin {
     protected void setup() {
         INSTANCE = this;
         this.config = configFile.load().join();
-        LoadConfig.build(this, configFile);
-        CommandRegistry.registerCommands(this);
-        EventRegistry.registerEvents(this);
+        LoadConfig.build(INSTANCE, configFile);
+        CommandRegistry.registerCommands(INSTANCE);
+        EventRegistry.registerEvents(INSTANCE);
         getLogger().atInfo().log("Init Custom Load!");
-
     }
 
     @Override

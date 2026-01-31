@@ -65,8 +65,9 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
 
             ui.set(base + " #ModeButton.Text", mode);
             ui.set(base + " #Stat.Text", offline.getText());
-            ui.set(base + " #Stat.Text", offline.getText());
-            ui.set(base + " #Count.Text", "");
+            ui.set(base + " #Stat.Style.TextColor", offline.getColor());
+            ui.set(base + " #Count.Text", offline.getFormatCount());
+            ui.set(base + " #Count.Style.TextColor", offline.getCountColor());
 
             modeIndex.put(mode, i);
 
@@ -100,12 +101,14 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         String base = "#Display[" + idx + "]";
 
         ui.set(base + " #Stat.Text", info.getText());
+        ui.set(base + " #Stat.Style.TextColor", info.getColor());
 
         if (info.getFormatCount() != null) {
             String count = info.getFormatCount()
                     .replace("$actual", String.valueOf(actual))
                     .replace("$max", String.valueOf(max));
             ui.set(base + " #Count.Text", count);
+            ui.set(base + " #Count.Style.TextColor", info.getCountColor());
         }
 
         sendUpdate(ui, false);

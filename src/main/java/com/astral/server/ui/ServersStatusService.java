@@ -47,7 +47,7 @@ public final class ServersStatusService {
 
         task = HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(
                 ServersStatusService::update,
-                0,
+                1,
                 5,
                 TimeUnit.SECONDS
         );
@@ -64,8 +64,6 @@ public final class ServersStatusService {
 
     private static void update() {
         if (menus.isEmpty()) return;
-
-        // ejemplo: usar siempre "online" y contar con menuCounter
         PluginConfig config = Main.getInstance().getPluginConfig();
         PluginConfig.StatusInfo online = config.getMenuLobby().getStatus().getOnline();
         int actual = menuCounter.incrementAndGet();

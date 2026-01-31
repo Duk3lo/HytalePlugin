@@ -114,7 +114,7 @@ public final class PluginConfig {
         );
 
         private StatusInfo offline = new StatusInfo(
-                "#FF0000", "Inactivo", "#777777", null
+                "#FF0000", "Inactivo", "#777777", "-0-"
         );
 
         public StatusInfo getOnline() { return online; }
@@ -172,20 +172,20 @@ public final class PluginConfig {
                                 (st, v, _) -> st.color = v,
                                 (st, _) -> st.color)
                         .add()
-                        .append(new KeyedCodec<>("Count_Color", Codec.STRING),
+                        .append(new KeyedCodec<>("Count_color", Codec.STRING),
                                 (st, v, _) -> st.countColor = v,
                                 (st, _) -> st.countColor)
                         .add()
-                        .append(new KeyedCodec<>("Format_Count", Codec.STRING),
+                        .append(new KeyedCodec<>("Format_count", Codec.STRING),
                                 (st, v, _) -> st.formatCount = v,
                                 (st, _) -> st.formatCount)
                         .add()
                         .build();
 
-        private String text;
+        private String text = "Offline";
         private String color = "#FFFFFF";
-        private String countColor = "#FFFFFF";
-        private String formatCount;
+        private String countColor = "#777777";
+        private String formatCount = "-0-";
 
         public StatusInfo() {}
 

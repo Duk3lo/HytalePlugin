@@ -1,28 +1,30 @@
 {
   "Join": {
-    "enable": true,
-    "top_message": "Bienvenido al servidor",
-    "bottom_message": "Astral"
+    "Enable": true,
+    "TopMessage": "Bienvenido al servidor",
+    "BottomMessage": "Astral"
   },
   "Menu_Lobby": {
-    "redis": {
-      "enabled": false
+    "Redis": {
+      "Enabled": false
     },
-    "servers": {
+    "Status": {
+      "Online": {
+        "Text": "Activo",
+        "Color": "#00FF00",
+        "Count_color": "#FFFFFF",
+        "Format_count": "$actual / $max"
+      },
+      "Offline": {
+        "Text": "Inactivo",
+        "Color": "#FF0000",
+        "Count_color": "#777777",
+        "Format_count": "-0-"
+      }
+    },
+    "Servers": {
       "Vanilla": {
-        "name": "Vanilla",
-        "online": {
-          "text": "Activo",
-          "color": "#00FF00",
-          "count_color": "#FFFFFF",
-          "format_count": "$actual / $max"
-        },
-        "offline": {
-          "text": "Inactivo",
-          "color": "#FF0000",
-          "count_color": "#777777",
-          "text_count": null
-        }
+        "Name": "Vanilla"
       }
     }
   }

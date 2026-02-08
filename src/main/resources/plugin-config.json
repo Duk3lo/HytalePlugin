@@ -2,11 +2,15 @@
   "Join": {
     "Enable": true,
     "TopMessage": "Bienvenido al servidor",
-    "BottomMessage": "Astral"
+    "BottomMessage": "Astral Network"
   },
   "Menu_Lobby": {
     "Redis": {
-      "Enabled": false
+      "Enabled": true,
+      "Host": "127.0.0.1",
+      "Port": 6379,
+      "Timeout": 1000,
+      "Password": ""
     },
     "Status": {
       "Online": {

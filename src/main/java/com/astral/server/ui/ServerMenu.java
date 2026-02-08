@@ -7,6 +7,7 @@ import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.protocol.packets.interface_.Page;
@@ -79,7 +80,7 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
             );
             i++;
         }
-
+        connectRedisData(ui);
         events.addEventBinding(
                 CustomUIEventBindingType.Activating,
                 "#CloseButton",
@@ -114,7 +115,52 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         sendUpdate(ui, false);
     }
 
+    private void connectRedisData(UICommandBuilder ui) {
+        PluginConfig config = Main.getInstance().getPluginConfig();
+        if (!config.getMenuLobby().getRedis().isEnabled()) return;
 
+        try {
+            PluginConfig.StatusInfo onlineInfo = config.getMenuLobby().getStatus().getOnline();
+            PluginConfig.StatusInfo offlineInfo = config.getMenuLobby().getStatus().getOffline();
+
+            Map<String, String> counts = RedisMenuCache.getInstance().getCounts();
+
+            for (String mode : modes) {
+                Integer idx = modeIndex.get(mode);
+                if (idx == null) continue;
+                String base = "#Display[" + idx + "]";
+
+                boolean online = counts.containsKey(mode);
+                PluginConfig.StatusInfo info = online ? onlineInfo : offlineInfo;
+
+                ui.set(base + " #Stat.Text", info.getText());
+                ui.set(base + " #Stat.Style.TextColor", info.getColor());
+
+                if (info.getFormatCount() != null) {
+                    if (online) {
+                        String raw = counts.get(mode);
+                        int players = 0;
+                        if (raw != null) {
+                            try {
+                                players = Integer.parseInt(raw);
+                            } catch (NumberFormatException ignored) {
+                            }
+                        }
+                        String count = info.getFormatCount()
+                                .replace("$actual", String.valueOf(players))
+                                .replace("$max", String.valueOf(100)); // modifica si tienes max real
+                        ui.set(base + " #Count.Text", count);
+                        ui.set(base + " #Count.Style.TextColor", info.getCountColor());
+                    } else {
+                        ui.set(base + " #Count.Text", offlineInfo.getFormatCount());
+                        ui.set(base + " #Count.Style.TextColor", offlineInfo.getCountColor());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            HytaleLogger.getLogger().atWarning().log("connectRedisData error: " + e.getMessage());
+        }
+    }
 
     @Override
     public void handleDataEvent(@NonNullDecl Ref<EntityStore> ref,
@@ -168,6 +214,10 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         }
 
         sendUpdate(ui, true);
+    }
+
+    public List<String> getModes() {
+        return this.modes;
     }
 
 }

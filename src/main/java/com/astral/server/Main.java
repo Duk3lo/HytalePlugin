@@ -4,6 +4,7 @@ import com.astral.server.commands.CommandRegistry;
 import com.astral.server.config.LoadConfig;
 import com.astral.server.config.PluginConfig;
 import com.astral.server.events.EventRegistry;
+import com.astral.server.redis.RedisService;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.util.Config;
@@ -12,10 +13,11 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 public final class Main extends JavaPlugin {
 
 
-    private static Main INSTANCE;
+    private static Main instance;
 
     private final Config<PluginConfig> configFile;
     private PluginConfig config;
+    private RedisService redisService;
 
     public Main(@NonNullDecl JavaPluginInit init) {
         super(init);
@@ -24,11 +26,13 @@ public final class Main extends JavaPlugin {
 
     @Override
     protected void setup() {
-        INSTANCE = this;
+        instance = this;
         this.config = configFile.load().join();
-        LoadConfig.build(INSTANCE, configFile);
-        CommandRegistry.registerCommands(INSTANCE);
-        EventRegistry.registerEvents(INSTANCE);
+        PluginConfig.Redis redis = config.getMenuLobby().getRedis();
+        if (redis.isEnabled()) {redisService = new RedisService(redis.getRedisHost(), redis.getRedisPort(), redis.getTimeOut(), redis.getRedisPassword(), getLogger());}
+        LoadConfig.build(instance, configFile);
+        CommandRegistry.registerCommands(instance);
+        EventRegistry.registerEvents(instance);
         getLogger().atInfo().log("Init Custom Load!");
     }
 
@@ -43,7 +47,7 @@ public final class Main extends JavaPlugin {
     }
 
     public static Main getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     public PluginConfig getPluginConfig() {
@@ -55,4 +59,11 @@ public final class Main extends JavaPlugin {
         getLogger().atInfo().log("plugin-config.json recargado");
     }
 
+    public RedisService getRedisService() {
+        return redisService;
+    }
+
+    public void setRedisService(RedisService redisService) {
+        this.redisService = redisService;
+    }
 }

@@ -2,20 +2,20 @@ package com.astral.server.ui;
 
 import com.astral.server.Main;
 import com.astral.server.config.PluginConfig;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.HytaleServer;
-
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 public final class ServersStatusService {
 
     private static ScheduledFuture<?> task;
     private static final Map<UUID, ServerMenu> menus = new ConcurrentHashMap<>();
-    private static final AtomicInteger menuCounter = new AtomicInteger(0);
+    private static final Main plugin = Main.getInstance();
 
     private ServersStatusService() {
     }
@@ -28,6 +28,8 @@ public final class ServersStatusService {
         menus.put(uuid, menu);
 
         if (menus.size() == 1) {
+            // primer menu: forzamos refresh inmediato de la cache para que el primer jugador vea datos frescos
+            RedisMenuCache.getInstance().forceRefreshIfMenus();
             start();
         }
     }
@@ -60,17 +62,45 @@ public final class ServersStatusService {
         }
     }
 
-
-
     private static void update() {
         if (menus.isEmpty()) return;
-        PluginConfig config = Main.getInstance().getPluginConfig();
-        PluginConfig.StatusInfo online = config.getMenuLobby().getStatus().getOnline();
-        int actual = menuCounter.incrementAndGet();
-        int max = 100;
+        PluginConfig.Redis redisCfg = plugin.getPluginConfig().getMenuLobby().getRedis();
+        final int max = 100;
 
         for (ServerMenu menu : menus.values()) {
-            menu.updateMode("Vanilla", true ,actual, max);
+            if (!redisCfg.isEnabled()) {
+                for (String mode : menu.getModes()) {
+                    menu.updateMode(mode, false, 0, max);
+                }
+                continue;
+            }
+
+            try {
+                // Obtenemos counts desde la cache (la cache decide si hace I/O)
+                Map<String, String> counts = RedisMenuCache.getInstance().getCounts();
+
+                for (String mode : menu.getModes()) {
+                    boolean online = counts.containsKey(mode);
+                    int players = 0;
+                    if (online) {
+                        String val = counts.get(mode);
+                        if (val != null) {
+                            try {
+                                players = Integer.parseInt(val);
+                            } catch (NumberFormatException ignored) {
+                            }
+                        }
+                    }
+                    menu.updateMode(mode, online, players, max);
+                }
+
+            } catch (Exception e) {
+                HytaleLogger.getLogger().atWarning().log("Error en ServersStatusService.update: " + e.getMessage());
+                for (String mode : menu.getModes()) {
+                    menu.updateMode(mode, false, 0, max);
+                }
+            }
         }
     }
+
 }

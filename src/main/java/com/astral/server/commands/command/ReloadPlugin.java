@@ -1,8 +1,11 @@
 package com.astral.server.commands.command;
 
 import com.astral.server.Main;
+import com.astral.server.config.PluginConfig;
+import com.astral.server.redis.RedisService;
 import com.astral.server.ui.ServerMenu;
 import com.astral.server.ui.ServersStatusService;
+import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
@@ -24,7 +27,6 @@ public final class ReloadPlugin extends AbstractCommand {
     protected CompletableFuture<Void> execute(@NonNullDecl CommandContext ctx) {
 
         Main plugin = Main.getInstance();
-
         plugin.reloadPluginConfig();
         List<String> modes = plugin.getPluginConfig()
                 .getMenuLobby()
@@ -35,6 +37,12 @@ public final class ReloadPlugin extends AbstractCommand {
 
         for (ServerMenu menu : ServersStatusService.getMenus().values()) {
             menu.reloadModes(modes);
+        }
+
+        PluginConfig.Redis redis = plugin.getPluginConfig().getMenuLobby().getRedis();
+        if (redis.isEnabled()) {
+            RedisService redisService = new RedisService(redis.getRedisHost(), redis.getRedisPort(), redis.getTimeOut(), redis.getRedisPassword(), HytaleLogger.getLogger());
+            plugin.setRedisService(redisService);
         }
 
         ctx.sender().sendMessage(

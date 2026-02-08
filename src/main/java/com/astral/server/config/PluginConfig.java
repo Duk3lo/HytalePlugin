@@ -131,11 +131,35 @@ public final class PluginConfig {
                                 (r, v, _) -> r.enabled = v,
                                 (r, _) -> r.enabled)
                         .add()
+                        .append(new KeyedCodec<>("Host", Codec.STRING),
+                                (r, v, _)-> r.redisHost = v,
+                                (r,_) -> r.redisHost)
+                        .add()
+                        .append(new KeyedCodec<>("Port", Codec.INTEGER),
+                                (r, v, _)-> r.redisPort = v,
+                                (r,_) -> r.redisPort)
+                        .add()
+                        .append(new KeyedCodec<>("Timeout", Codec.INTEGER),
+                                (r, v, _)-> r.timeOut = v,
+                                (r,_) -> r.timeOut)
+                        .add()
+                        .append(new KeyedCodec<>("Password", Codec.STRING),
+                                (r, v, _)-> r.redisPassword = v,
+                                (r,_) -> r.redisPassword)
+                        .add()
                         .build();
 
-        private boolean enabled = false;
+        private boolean enabled = true;
+        private String redisHost = "127.0.0.1";
+        private int redisPort = 6379;
+        private int timeOut = 1000;
+        private String redisPassword = "";
 
         public boolean isEnabled() { return enabled; }
+        public String getRedisHost() { return redisHost; }
+        public int getRedisPort() { return redisPort; }
+        public int getTimeOut() { return timeOut; }
+        public String getRedisPassword() { return redisPassword; }
     }
 
     /* ================= SERVER INFO ================= */

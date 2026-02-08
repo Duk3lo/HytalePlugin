@@ -4,6 +4,7 @@ import com.astral.server.Main;
 import com.astral.server.config.PluginConfig;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.HytaleServer;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,10 +48,21 @@ public final class ServersStatusService {
             return;
         }
 
+        long periodSeconds;
+        try {
+            periodSeconds = plugin.getPluginConfig()
+                    .getMenuLobby()
+                    .getRedis()
+                    .getUpdateUI();
+            if (periodSeconds <= 0) periodSeconds = 5;
+        } catch (Exception e) {
+            periodSeconds = 5;
+        }
+
         task = HytaleServer.SCHEDULED_EXECUTOR.scheduleAtFixedRate(
                 ServersStatusService::update,
                 1,
-                5,
+                periodSeconds,
                 TimeUnit.SECONDS
         );
     }

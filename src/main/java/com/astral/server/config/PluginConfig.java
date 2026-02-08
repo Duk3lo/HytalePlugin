@@ -147,6 +147,10 @@ public final class PluginConfig {
                                 (r, v, _)-> r.redisPassword = v,
                                 (r,_) -> r.redisPassword)
                         .add()
+                        .append(new KeyedCodec<>("UpdateUi", Codec.LONG),
+                                (r, v, _)-> r.updateUI = v,
+                                (r,_) -> r.updateUI)
+                        .add()
                         .build();
 
         private boolean enabled = true;
@@ -154,12 +158,14 @@ public final class PluginConfig {
         private int redisPort = 6379;
         private int timeOut = 1000;
         private String redisPassword = "";
+        private long updateUI = 5L;
 
         public boolean isEnabled() { return enabled; }
         public String getRedisHost() { return redisHost; }
         public int getRedisPort() { return redisPort; }
         public int getTimeOut() { return timeOut; }
         public String getRedisPassword() { return redisPassword; }
+        public long getUpdateUI() { return updateUI; }
     }
 
     /* ================= SERVER INFO ================= */

@@ -16,7 +16,7 @@ import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 public final class About extends AbstractPlayerCommand {
     public About(@NonNullDecl String name, @NonNullDecl String description, boolean requiresConfirmation) {
         super(name, description, requiresConfirmation);
-        this.requirePermission(HytalePermissions.fromCommand("description.command"));
+        requirePermission(HytalePermissions.fromCommand("astral.about"));
     }
 
     @Override

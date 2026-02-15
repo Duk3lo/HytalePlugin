@@ -29,7 +29,6 @@ public final class ServersStatusService {
         menus.put(uuid, menu);
 
         if (menus.size() == 1) {
-            // primer menu: forzamos refresh inmediato de la cache para que el primer jugador vea datos frescos
             RedisMenuCache.getInstance().forceRefreshIfMenus();
             start();
         }
@@ -88,7 +87,6 @@ public final class ServersStatusService {
             }
 
             try {
-                // Obtenemos counts desde la cache (la cache decide si hace I/O)
                 Map<String, String> counts = RedisMenuCache.getInstance().getCounts();
 
                 for (String mode : menu.getModes()) {

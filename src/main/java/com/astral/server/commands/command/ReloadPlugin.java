@@ -9,6 +9,7 @@ import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.permissions.HytalePermissions;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public final class ReloadPlugin extends AbstractCommand {
                         @NonNullDecl String description,
                         boolean requiresConfirmation) {
         super(name, description, requiresConfirmation);
+        requirePermission(HytalePermissions.fromCommand("astral.reloadplugin"));
     }
 
     @NonNullDecl

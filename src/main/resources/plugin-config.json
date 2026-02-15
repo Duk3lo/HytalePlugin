@@ -10,6 +10,7 @@
       "Host": "127.0.0.1",
       "Port": 6379,
       "Timeout": 1000,
+      "UpdateUi": 5,
       "Password": ""
     },
     "Status": {
@@ -27,8 +28,8 @@
       }
     },
     "Servers": {
-      "Vanilla": {
-        "Name": "Vanilla"
+      "lobby": {
+        "Name": "lobby"
       }
     }
   }

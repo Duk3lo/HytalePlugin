@@ -4,6 +4,8 @@ import com.astral.server.commands.CommandRegistry;
 import com.astral.server.config.LoadConfig;
 import com.astral.server.config.PluginConfig;
 import com.astral.server.events.EventRegistry;
+import com.astral.server.events.EventScheduler;
+import com.astral.server.permission.DefPermission;
 import com.astral.server.redis.RedisService;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
@@ -18,6 +20,7 @@ public final class Main extends JavaPlugin {
     private final Config<PluginConfig> configFile;
     private PluginConfig config;
     private RedisService redisService;
+    private EventScheduler eventScheduler;
 
     public Main(@NonNullDecl JavaPluginInit init) {
         super(init);
@@ -33,16 +36,22 @@ public final class Main extends JavaPlugin {
         LoadConfig.build(instance, configFile);
         CommandRegistry.registerCommands(instance);
         EventRegistry.registerEvents(instance);
+        DefPermission.register();
         getLogger().atInfo().log("Init Custom Load!");
     }
 
     @Override
     protected void start() {
+        eventScheduler = new EventScheduler(instance);
+        eventScheduler.startStatusPosition(15, 150);
         getLogger().atInfo().log("Loaded");
     }
 
     @Override
     protected void shutdown() {
+        if (this.eventScheduler != null) {
+            this.eventScheduler.stop();
+        }
         getLogger().atInfo().log("Bye Bye");
     }
 

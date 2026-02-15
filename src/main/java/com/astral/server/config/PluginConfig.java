@@ -73,8 +73,7 @@ public final class PluginConfig {
                                 (m, v, _) -> m.status = v,
                                 (m, _) -> m.status)
                         .add()
-                        .append(new KeyedCodec<>("Servers",
-                                        new MapCodec<>(ServerInfo.CODEC, HashMap::new)),
+                        .append(new KeyedCodec<>("Servers", new MapCodec<>(ServerInfo.CODEC, HashMap::new)),
                                 (m, v, _) -> m.servers = v,
                                 (m, _) -> m.servers)
                         .add()

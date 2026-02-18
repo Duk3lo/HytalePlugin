@@ -80,7 +80,8 @@ public final class ServersStatusService {
 
         for (ServerMenu menu : menus.values()) {
             if (!redisCfg.isEnabled()) {
-                for (String mode : menu.getModes()) {
+                for (Map.Entry<String, PluginConfig.ServerInfo> map : menu.getModes().entrySet()) {
+                    String mode = map.getKey();
                     menu.updateMode(mode, false, 0, max);
                 }
                 continue;
@@ -89,7 +90,8 @@ public final class ServersStatusService {
             try {
                 Map<String, String> counts = RedisMenuCache.getInstance().getCounts();
 
-                for (String mode : menu.getModes()) {
+                for (Map.Entry<String, PluginConfig.ServerInfo> map : menu.getModes().entrySet()) {
+                    String mode = map.getKey();
                     boolean online = counts.containsKey(mode);
                     int players = 0;
                     if (online) {
@@ -106,7 +108,8 @@ public final class ServersStatusService {
 
             } catch (Exception e) {
                 HytaleLogger.getLogger().atWarning().log("Error en ServersStatusService.update: " + e.getMessage());
-                for (String mode : menu.getModes()) {
+                for (Map.Entry<String, PluginConfig.ServerInfo> map : menu.getModes().entrySet()) {
+                    String mode = map.getKey();
                     menu.updateMode(mode, false, 0, max);
                 }
             }

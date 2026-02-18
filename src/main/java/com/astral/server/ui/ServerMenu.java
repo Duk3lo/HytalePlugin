@@ -25,7 +25,8 @@ import java.util.*;
 
 public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEventData> {
 
-    private final List<String> modes;
+    private final Map<String, PluginConfig.ServerInfo> modes;
+
     private final Map<String, Integer> modeIndex = new HashMap<>();
 
     public static class MenuEventData {
@@ -40,9 +41,9 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
                         .build();
     }
 
-    public ServerMenu(PlayerRef playerRef, Collection<String> modes) {
+    public ServerMenu(PlayerRef playerRef, Map<String, PluginConfig.ServerInfo> modes) {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, MenuEventData.CODEC);
-        this.modes = new ArrayList<>(modes);
+        this.modes = modes;
         ServersStatusService.addMenu(playerRef.getUuid(), this);
     }
 
@@ -59,12 +60,14 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         ui.clear("#Display");
 
         int i = 0;
-        for (String mode : modes) {
+        for (Map.Entry<String, PluginConfig.ServerInfo> map : modes.entrySet()) {
+            String mode = map.getKey();
+            String name = map.getValue().getName();
 
             ui.append("#Display", "Astral/ModeEntry.ui");
             String base = "#Display[" + i + "]";
 
-            ui.set(base + " #ModeButton.Text", mode);
+            ui.set(base + " #ModeButton.Text", name);
             ui.set(base + " #Stat.Text", offline.getText());
             ui.set(base + " #Stat.Style.TextColor", offline.getColor());
             ui.set(base + " #Count.Text", offline.getFormatCount());
@@ -125,7 +128,9 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
 
             Map<String, String> counts = RedisMenuCache.getInstance().getCounts();
 
-            for (String mode : modes) {
+            for (Map.Entry<String, PluginConfig.ServerInfo> map : modes.entrySet()) {
+                String mode = map.getKey();
+
                 Integer idx = modeIndex.get(mode);
                 if (idx == null) continue;
                 String base = "#Display[" + idx + "]";
@@ -186,10 +191,10 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         }
     }
 
-    public void reloadModes(Collection<String> newModes) {
+    public void reloadModes(Map<String, PluginConfig.ServerInfo> newModes) {
 
         this.modes.clear();
-        this.modes.addAll(newModes);
+        this.modes.putAll(newModes);
 
         this.modeIndex.clear();
 
@@ -200,12 +205,14 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         ui.clear("#Display");
 
         int i = 0;
-        for (String mode : modes) {
+        for (Map.Entry<String, PluginConfig.ServerInfo> map : modes.entrySet()) {
+            String mode = map.getKey();
+            String name = map.getValue().getName();
 
             ui.append("#Display", "Astral/ModeEntry.ui");
             String base = "#Display[" + i + "]";
 
-            ui.set(base + " #ModeButton.Text", mode);
+            ui.set(base + " #ModeButton.Text", name);
             ui.set(base + " #Stat.Text", offline.getText());
             ui.set(base + " #Count.Text", "");
 
@@ -216,7 +223,7 @@ public final class ServerMenu extends InteractiveCustomUIPage<ServerMenu.MenuEve
         sendUpdate(ui, true);
     }
 
-    public List<String> getModes() {
+    public Map<String, PluginConfig.ServerInfo> getModes() {
         return this.modes;
     }
 

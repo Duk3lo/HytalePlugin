@@ -4,11 +4,9 @@ import com.astral.server.Main;
 import com.astral.server.config.PluginConfig;
 import com.astral.server.redis.RedisService;
 import com.astral.server.redis.RedisSocketClient;
-import com.hypixel.hytale.logger.HytaleLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.io.IOException;
 import java.time.Clock;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,15 +67,11 @@ public final class RedisMenuCache {
         try {
             RedisService redisService = Main.getInstance().getRedisService();
             if (redisService == null || !redisService.isAvailable()) {
-                HytaleLogger.getLogger().atInfo()
-                        .log("RedisMenuCache: Redis no disponible, se mantiene cache actual");
                 return;
             }
 
             RedisSocketClient client = redisService.getClient();
             if (client == null) {
-                HytaleLogger.getLogger().atInfo()
-                        .log("RedisMenuCache: Redis client es null, se mantiene cache actual");
                 return;
             }
 
@@ -88,18 +82,7 @@ public final class RedisMenuCache {
                 lastRefreshEpochMs = clock.millis();
             }
 
-            HytaleLogger.getLogger().atInfo()
-                    .log("RedisMenuCache: cache actualizada (" + cached.size() + " entradas)");
-
-        } catch (IOException ioe) {
-            HytaleLogger.getLogger().atWarning()
-                    .log("RedisMenuCache: error leyendo Redis: " + ioe.getMessage());
-            synchronized (lock) {
-                lastRefreshEpochMs = 0L;
-            }
         } catch (Exception e) {
-            HytaleLogger.getLogger().atWarning()
-                    .log("RedisMenuCache: error inesperado: " + e.getMessage());
             synchronized (lock) {
                 lastRefreshEpochMs = 0L;
             }

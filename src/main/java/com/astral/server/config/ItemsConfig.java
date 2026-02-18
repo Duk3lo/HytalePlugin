@@ -1,52 +1,48 @@
 package com.astral.server.config;
 
 import com.hypixel.hytale.codec.Codec;
-import com.hypixel.hytale.codec.ExtraInfo;
 import com.hypixel.hytale.codec.KeyedCodec;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
-import com.hypixel.hytale.codec.schema.SchemaContext;
-import com.hypixel.hytale.codec.schema.config.Schema;
-import org.bson.BsonValue;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.hypixel.hytale.codec.codecs.map.MapCodec;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class ItemsConfig {
-    public static final BuilderCodec<ItemsConfig> CODEC = null;
+    public static final BuilderCodec<ItemsConfig> CODEC =
+            BuilderCodec.builder(ItemsConfig.class, ItemsConfig::new)
+                    .append(new KeyedCodec<>("Items", new MapCodec<>(ItemCommand.CODEC, HashMap::new)),
+                            (m, v, _) -> m.itemsMap = v,
+                            (m, _) -> m.itemsMap)
+                    .add()
+                    .build();
 
+    private Map<String, ItemCommand> itemsMap = new HashMap<>();
+
+        public ItemsConfig() { itemsMap.put("ItemMenu", new ItemCommand("Menu", (short) 36)); }
+
+    public Map<String, ItemCommand> getItemsMap() { return itemsMap; }
 
     public static class ItemCommand {
-
         public static final BuilderCodec<ItemCommand> CODEC =
                 BuilderCodec.builder(ItemCommand.class, ItemCommand::new)
-                        .append(new KeyedCodec<>("Items", Codec.STRING),
+                        .append(new KeyedCodec<>("ID", Codec.STRING),
                                 (r, v, _) -> r.id = v,
                                 (r, _) -> r.id)
                         .add()
-                        .append(new KeyedCodec<>("Lore", null),
-                                (r, v, _) -> r.lore = v,
-                                (r, _) -> r.lore)
-                        .add()
-                        .append(new KeyedCodec<>("Command", Codec.STRING),
-                                (r, v, _) -> r.command = v,
-                                (r, _) -> r.command)
+                        .append(new KeyedCodec<>("Slot", Codec.SHORT),
+                                (r, v, _) -> r.slot = v,
+                                (r, _) -> r.slot)
                         .add()
                         .build();
-
-        private String id = "Tool_Watering_Can";
-        private List<String> lore = List.of("event", "asd");
-        private String command = "astMen";
+        private String id = "";
+        private short slot = 0;
 
         public ItemCommand() {}
-
-        public String getId() { return id; }
-        public List<String> getLore() { return lore; }
-        public String getCommand() { return command; }
-
-        public void setId(String id) { this.id = id; }
-        public void setLore(List<String> lore) { this.lore = lore; }
-        public void setCommand(String command) { this.command = command; }
+        public ItemCommand(String id, short slot) {
+            this.id = id;
+            this.slot = slot;
+        }
+        public String getId() {return id;}
+        public short getSlot() {return slot;}
     }
 }

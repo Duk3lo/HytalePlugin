@@ -5,14 +5,23 @@ import com.astral.server.config.PluginConfig;
 import com.astral.server.redis.RedisService;
 import com.astral.server.ui.ServerMenu;
 import com.astral.server.ui.ServersStatusService;
+import com.astral.server.util.ItemsToConfig;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.command.system.AbstractCommand;
 import com.hypixel.hytale.server.core.command.system.CommandContext;
+import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.permissions.HytalePermissions;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.Universe;
+import com.hypixel.hytale.server.core.universe.world.World;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public final class ReloadPlugin extends AbstractCommand {
@@ -30,15 +39,26 @@ public final class ReloadPlugin extends AbstractCommand {
 
         Main plugin = Main.getInstance();
         plugin.reloadPluginConfig();
-        List<String> modes = plugin.getPluginConfig()
-                .getMenuLobby()
-                .getServers()
-                .keySet()
-                .stream()
-                .toList();
+        Map<String, PluginConfig.ServerInfo> modes = plugin.getPluginConfig().getMenuLobby().getServers();
 
         for (ServerMenu menu : ServersStatusService.getMenus().values()) {
             menu.reloadModes(modes);
+        }
+
+        Collection<World> worlds = Universe.get().getWorlds().values();
+        for (World world : worlds) {
+            world.execute(() -> {
+                Collection<PlayerRef> playerRefs = world.getPlayerRefs();
+                for (PlayerRef playerRef : playerRefs) {
+                    Ref<EntityStore> ref = playerRef.getReference();
+                    if (ref == null) continue;
+                    Store<EntityStore> store = ref.getStore();
+                    Player player = store.getComponent(ref, Player.getComponentType());
+                    if (player == null) continue;
+                    ItemsToConfig.LoadItemsToStorage();
+                    ItemsToConfig.inOriginalSlots(player, playerRef.getUuid());
+                }
+            });
         }
 
         PluginConfig.Redis redis = plugin.getPluginConfig().getMenuLobby().getRedis();

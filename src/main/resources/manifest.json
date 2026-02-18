@@ -4,5 +4,13 @@
   "Version": "0.0.1",
   "Main": "com.astral.server.Main",
   "DisabledByDefault": false,
-  "IncludesAssetPack": true
+  "IncludesAssetPack": true,
+  "ServerVersion": "*",
+  "Authors": [
+    {
+      "Name": "Duk3lo",
+      "Email": "your.email@example.com",
+      "Url": "https://your-website.com"
+    }
+  ]
 }

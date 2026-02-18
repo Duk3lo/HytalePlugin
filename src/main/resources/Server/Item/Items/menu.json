@@ -1,0 +1,23 @@
+{
+  "TranslationProperties": {
+    "Name": "Menu",
+    "Description": "Abre el menu de Juegos"
+  },
+  "Id": "Menu",
+  "Icon": "Icons/ItemsGenerated/menuIcon.png",
+  "Quality": "Epic",
+  "MaxStack": 1,
+  "Categories": [
+    "Items.Example"
+  ],
+
+  "Interactions": {
+    "Secondary": {
+      "Interactions": [
+        {
+          "Type": "menu"
+        }
+      ]
+    }
+  }
+}

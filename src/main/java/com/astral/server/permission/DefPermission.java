@@ -10,10 +10,11 @@ public final class DefPermission {
     public static final String PICKUP_ITEMS = "astral.pickupitems";
     public static final String DROP_ITEMS = "astral.dropitems";
     public static final String DAMAGE = "astral.damage";
+    public static final String INVENTORY_CHANGE = "astral.inventorychange";
 
     private static final PermissionsModule permissions = PermissionsModule.get();
 
     public static void register(){
-        permissions.addGroupPermission("lobby", Set.of(BREAK_BLOCKS, ADD_BLOCKS,  PICKUP_ITEMS, DROP_ITEMS, DAMAGE));
+        permissions.addGroupPermission("lobby", Set.of(BREAK_BLOCKS, ADD_BLOCKS,  PICKUP_ITEMS, DROP_ITEMS, DAMAGE, INVENTORY_CHANGE));
     }
 }

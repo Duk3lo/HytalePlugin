@@ -18,6 +18,10 @@ public final class PluginConfig {
                             (cfg, v, _) -> cfg.join = v,
                             (cfg, _) -> cfg.join)
                     .add()
+                    .append(new KeyedCodec<>("Limits", Limits.CODEC),
+                            (cfg, v, _) -> cfg.limits = v,
+                            (cfg, _) -> cfg.limits)
+                    .add()
                     .append(new KeyedCodec<>("Menu_Lobby", MenuLobby.CODEC),
                             (cfg, v, _) -> cfg.menuLobby = v,
                             (cfg, _) -> cfg.menuLobby)
@@ -25,9 +29,11 @@ public final class PluginConfig {
                     .build();
 
     private Join join = new Join();
+    private Limits limits = new Limits();
     private MenuLobby menuLobby = new MenuLobby();
 
     public Join getJoin() { return join; }
+    public Limits getLimits() { return limits; }
     public MenuLobby getMenuLobby() { return menuLobby; }
 
     /* ================= JOIN ================= */
@@ -59,6 +65,86 @@ public final class PluginConfig {
         public String getBottomMessage() { return bottomMessage; }
     }
 
+    /* ================= LIMITS ================= */
+    public static class Limits{
+
+        public static final BuilderCodec<Limits> CODEC =
+                BuilderCodec.builder(Limits.class, Limits::new)
+
+                        .append(new KeyedCodec<>("Enable", Codec.BOOLEAN),
+                                (j, v, _) -> j.enable = v,
+                                (j, _) -> j.enable)
+                        .add()
+
+                        .append(new KeyedCodec<>("Max_Y", Codec.DOUBLE),
+                                (j, v, _) -> j.max_y = v,
+                                (j, _) -> j.max_y)
+                        .add()
+
+                        .append(new KeyedCodec<>("Min_Y", Codec.DOUBLE),
+                                (j, v, _) -> j.min_y = v,
+                                (j, _) -> j.min_y)
+                        .add()
+
+                        .append(new KeyedCodec<>("Max_X", Codec.DOUBLE),
+                                (j, v, _) -> j.max_x = v,
+                                (j, _) -> j.max_x)
+                        .add()
+
+                        .append(new KeyedCodec<>("Min_X", Codec.DOUBLE),
+                                (j, v, _) -> j.min_x = v,
+                                (j, _) -> j.min_x)
+                        .add()
+
+                        .append(new KeyedCodec<>("Max_Z", Codec.DOUBLE),
+                                (j, v, _) -> j.max_z = v,
+                                (j, _) -> j.max_z)
+                        .add()
+
+                        .append(new KeyedCodec<>("Min_Z", Codec.DOUBLE),
+                                (j, v, _) -> j.min_z = v,
+                                (j, _) -> j.min_z)
+                        .add()
+
+                        .build();
+
+        private boolean enable = false;
+        private double max_y = 0.0;
+        private double min_y = 0.0;
+        private double max_x = 0.0;
+        private double min_x = 0.0;
+        private double max_z = 0.0;
+        private double min_z = 0.0;
+
+        public boolean isEnable() {
+            return enable;
+        }
+
+        public double getMax_x() {
+            return max_x;
+        }
+
+        public double getMax_y() {
+            return max_y;
+        }
+
+        public double getMax_z() {
+            return max_z;
+        }
+
+        public double getMin_x() {
+            return min_x;
+        }
+
+        public double getMin_y() {
+            return min_y;
+        }
+
+        public double getMin_z() {
+            return min_z;
+        }
+    }
+
     /* ================= MENU LOBBY ================= */
 
     public static class MenuLobby {
@@ -84,7 +170,7 @@ public final class PluginConfig {
         private Map<String, ServerInfo> servers = new HashMap<>();
 
         public MenuLobby() {
-            servers.put("Vanilla", new ServerInfo("Vanilla"));
+            servers.put("lobby", new ServerInfo("Lobby Principal"));
         }
 
         public Redis getRedis() { return redis; }
@@ -179,12 +265,12 @@ public final class PluginConfig {
                         .add()
                         .build();
 
-        private String name = "Server";
+        private String name = "";
 
         public ServerInfo() {}
         public ServerInfo(String name) { this.name = name; }
 
-        //public String getName() { return name; }
+        public String getName() { return name; }
     }
 
     /* ================= STATUS INFO ================= */

@@ -6,6 +6,7 @@ import com.hypixel.hytale.component.query.Query;
 import com.hypixel.hytale.component.system.EntityEventSystem;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.ecs.InteractivelyPickupItemEvent;
+import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ public final class CanPickUpItem extends EntityEventSystem<EntityStore, Interact
         Player player = store.getComponent(ref, Player.getComponentType());
         if (player != null) {
             if (!player.hasPermission(DefPermission.PICKUP_ITEMS)) {
+                interactivelyPickupItemEvent.setItemStack(ItemStack.EMPTY);
                 interactivelyPickupItemEvent.setCancelled(true);
             }
         }

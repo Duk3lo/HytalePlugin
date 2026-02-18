@@ -1,5 +1,6 @@
 package com.astral.server.events;
 
+import com.astral.server.config.PluginConfig;
 import com.astral.server.events.task.StatusPosition;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 
@@ -17,7 +18,7 @@ public final class EventScheduler {
         this.plugin = plugin;
     }
 
-    public synchronized void startStatusPosition(double minY, double maxY) {
+    public synchronized void startStatusPosition() {
         if (scheduler != null && !scheduler.isShutdown()) {
             plugin.getLogger().atInfo().log("EventScheduler: StatusPosition ya está en ejecución.");
             return;
@@ -29,10 +30,8 @@ public final class EventScheduler {
             return t;
         });
 
-        StatusPosition statusPosition = new StatusPosition(minY, maxY);
+        StatusPosition statusPosition = new StatusPosition();
         statusPosition.schedule(this.scheduler);
-
-        plugin.getLogger().atInfo().log("EventScheduler: StatusPosition programado (minY=" + minY + ", maxY=" + maxY + ").");
     }
 
     public synchronized void stop() {
@@ -44,5 +43,7 @@ public final class EventScheduler {
             plugin.getLogger().atInfo().log("EventScheduler: scheduler ya estaba detenido o no existe.");
         }
     }
+
+
 
 }

@@ -14,7 +14,7 @@ import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.checkerframework.checker.nullness.compatqual.NonNullDecl;
 
-import java.util.List;
+import java.util.Map;
 
 public final class OpenMenuMode extends AbstractPlayerCommand {
 
@@ -33,14 +33,8 @@ public final class OpenMenuMode extends AbstractPlayerCommand {
     ) {
         Player player = store.getComponent(ref, Player.getComponentType());
         if (player == null) return;
-
         PluginConfig config = Main.getInstance().getPluginConfig();
-
-        List<String> modes = config.getMenuLobby()
-                .getServers()
-                .keySet()
-                .stream()
-                .toList();
+        Map<String, PluginConfig.ServerInfo> modes = config.getMenuLobby().getServers();
         ServerMenu menu = new ServerMenu(playerRef, modes);
         player.getPageManager().openCustomPage(ref, store, menu);
     }

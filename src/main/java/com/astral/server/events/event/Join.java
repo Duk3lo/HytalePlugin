@@ -2,6 +2,7 @@ package com.astral.server.events.event;
 
 import com.astral.server.Main;
 import com.astral.server.config.PluginConfig;
+import com.astral.server.util.ItemsToConfig;
 import com.astral.server.util.SpawnTeleporter;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
@@ -35,9 +36,12 @@ public final class Join {
         Store<EntityStore> store = event.getPlayerRef().getStore();
         Ref<EntityStore> ref = event.getPlayerRef();
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
+        if (playerRef==null) return;
         World world = event.getPlayer().getWorld();
         SpawnTeleporter.teleportToSpawn(playerRef, world, false);
         Player player = event.getPlayer();
-        player.getInventory().clear();
+        ItemsToConfig.LoadItemsToStorage();
+        ItemsToConfig.inOriginalSlots(player, playerRef.getUuid());
+
     }
 }

@@ -33,15 +33,14 @@ public final class Join {
     }
 
     public void onPlayerReady(@NonNullDecl PlayerReadyEvent event) {
+        final World world = event.getPlayer().getWorld();
+        final Player player = event.getPlayer();
         Store<EntityStore> store = event.getPlayerRef().getStore();
         Ref<EntityStore> ref = event.getPlayerRef();
         PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         if (playerRef==null) return;
-        World world = event.getPlayer().getWorld();
         SpawnTeleporter.teleportToSpawn(playerRef, world, false);
-        Player player = event.getPlayer();
         ItemsToConfig.LoadItemsToStorage();
         ItemsToConfig.inOriginalSlots(player, playerRef.getUuid());
-
     }
 }

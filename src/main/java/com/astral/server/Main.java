@@ -6,7 +6,6 @@ import com.astral.server.config.LoadConfig;
 
 import com.astral.server.config.PluginConfig;
 import com.astral.server.events.EventRegistry;
-import com.astral.server.events.EventScheduler;
 import com.astral.server.permission.DefPermission;
 import com.astral.server.redis.RedisService;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -27,7 +26,6 @@ public final class Main extends JavaPlugin {
     private PluginConfig config;
     private ItemsConfig itemsConfig;
     private RedisService redisService;
-    private EventScheduler eventScheduler;
 
     private static final String pluginConfig = "plugin-config";
     private static final String itemConfig = "item-config";
@@ -57,16 +55,11 @@ public final class Main extends JavaPlugin {
 
     @Override
     protected void start() {
-        eventScheduler = new EventScheduler(instance);
-        eventScheduler.startStatusPosition();
         getLogger().atInfo().log("Loaded");
     }
 
     @Override
     protected void shutdown() {
-        if (this.eventScheduler != null) {
-            this.eventScheduler.stop();
-        }
         getLogger().atInfo().log("Bye Bye");
     }
 

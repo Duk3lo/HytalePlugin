@@ -1,18 +1,24 @@
-package com.astral.server.events.task;
+package com.astral.server.events.custom;
 
 import com.astral.server.Main;
 import com.astral.server.config.PluginConfig;
 import com.astral.server.util.SpawnTeleporter;
+import com.hypixel.hytale.component.ArchetypeChunk;
+import com.hypixel.hytale.component.CommandBuffer;
+import com.hypixel.hytale.component.Ref;
+import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.component.query.Query;
+import com.hypixel.hytale.component.system.tick.DelayedEntitySystem;
+import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.math.vector.Vector3d;
+import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import org.jetbrains.annotations.NotNull;
-import java.util.UUID;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-public final class StatusPosition implements Runnable {
+import java.util.UUID;
+
+public final class Move  extends DelayedEntitySystem<EntityStore> {
 
     private double minY;
     private double maxY;
@@ -21,12 +27,23 @@ public final class StatusPosition implements Runnable {
     private double minZ;
     private double maxZ;
 
+    public Move() {
+        super(0.5F);
+    }
+
     @Override
-    public void run() {
+    public void tick(float v, int i, @NotNull ArchetypeChunk<EntityStore> archetypeChunk, @NotNull Store<EntityStore> store, @NotNull CommandBuffer<EntityStore> commandBuffer) {
+        Ref<EntityStore> ref = archetypeChunk.getReferenceTo(i);
+        PlayerRef playerRef = store.getComponent(ref, PlayerRef.getComponentType());
         PluginConfig config = Main.getInstance().getPluginConfig();
         PluginConfig.Limits limits = config.getLimits();
         boolean enabled = limits.isEnable();
         if (!enabled) {return;}
+        if (playerRef == null) return;
+        UUID worldUUID = playerRef.getWorldUuid();
+        if (worldUUID == null) return;
+        World world = Universe.get().getWorld(worldUUID);
+        if (world == null) return;
         double lMinY = limits.getMin_y();
         double lMaxY = limits.getMax_y();
         double lMinX = limits.getMin_x();
@@ -41,23 +58,12 @@ public final class StatusPosition implements Runnable {
         this.minZ = Math.min(lMinZ, lMaxZ);
         this.maxZ = Math.max(lMinZ, lMaxZ);
 
-        for (PlayerRef playerRef : Universe.get().getPlayers()) {
-            if (playerRef == null) continue;
-
-            UUID worldUUID = playerRef.getWorldUuid();
-            if (worldUUID == null) continue;
-
-            World world = Universe.get().getWorld(worldUUID);
-            if (world == null) continue;
-
-            Vector3d position = playerRef.getTransform().getPosition();
-
-            boolean outside = isABoolean(position);
-
-            if (outside) {
-                SpawnTeleporter.teleportToSpawn(playerRef, world, true);
-            }
+        Vector3d position = playerRef.getTransform().getPosition();
+        boolean outside = isABoolean(position);
+        if (outside) {
+            SpawnTeleporter.teleportToSpawn(playerRef, world, true);
         }
+
     }
 
     private boolean isABoolean(@NotNull Vector3d position) {
@@ -83,8 +89,8 @@ public final class StatusPosition implements Runnable {
         return outside;
     }
 
-
-    public void schedule(@NotNull ScheduledExecutorService executor) {
-        executor.scheduleAtFixedRate(this, 500L, 500L, TimeUnit.MILLISECONDS);
+    @Override
+    public @NotNull Query<EntityStore> getQuery() {
+        return PlayerRef.getComponentType();
     }
 }

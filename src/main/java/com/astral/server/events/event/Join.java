@@ -2,14 +2,17 @@ package com.astral.server.events.event;
 
 import com.astral.server.Main;
 import com.astral.server.config.PluginConfig;
+import com.astral.server.permission.DefPermission;
 import com.astral.server.util.ItemsToConfig;
 import com.astral.server.util.SpawnTeleporter;
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.protocol.GameMode;
 import com.hypixel.hytale.server.core.Message;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.event.events.player.PlayerConnectEvent;
 import com.hypixel.hytale.server.core.event.events.player.PlayerReadyEvent;
+import com.hypixel.hytale.server.core.modules.entity.component.Invulnerable;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -42,5 +45,6 @@ public final class Join {
         SpawnTeleporter.teleportToSpawn(playerRef, world, false);
         ItemsToConfig.LoadItemsToStorage();
         ItemsToConfig.inOriginalSlots(player, playerRef.getUuid());
+        if (!player.hasPermission(DefPermission.DAMAGE) && player.getGameMode().equals(GameMode.Adventure)) store.putComponent(ref, Invulnerable.getComponentType(), Invulnerable.INSTANCE);
     }
 }

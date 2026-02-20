@@ -1,4 +1,5 @@
 package com.astral.server.util;
+
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.vector.Transform;

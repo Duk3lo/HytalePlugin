@@ -18,10 +18,12 @@ public final class EventRegistry {
         plugin.getEventRegistry().registerGlobal(PlayerReadyEvent.class, join::onPlayerReady);
         InventoryEvent inventoryEvent = new InventoryEvent();
         plugin.getEventRegistry().registerGlobal(LivingEntityInventoryChangeEvent.class, inventoryEvent::OnPlayerInventoryChange);
+        plugin.getEntityStoreRegistry().registerSystem(new Move());
         plugin.getEntityStoreRegistry().registerSystem(new CanBreakBlock());
         plugin.getEntityStoreRegistry().registerSystem(new CanAddBlock());
         plugin.getEntityStoreRegistry().registerSystem(new CanDropItemRequest());
         plugin.getEntityStoreRegistry().registerSystem(new CanPickUpItem());
+        plugin.getEntityStoreRegistry().registerSystem(new GameModeChange());
         plugin.getEntityStoreRegistry().registerSystem(new CanDamage());
         plugin.getCodecRegistry(Interaction.CODEC).register("menu", MenuItem.class, MenuItem.CODEC);
     }

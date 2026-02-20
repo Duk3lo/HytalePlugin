@@ -29,8 +29,10 @@ public final class CanDamage extends DelayedEntitySystem<EntityStore> {
         World world = player.getWorld();
         if (world == null) return;
         world.execute(()->{
-            if (!player.hasPermission(DefPermission.DAMAGE) && player.getGameMode().equals(GameMode.Adventure)) store.putComponent(ref, Invulnerable.getComponentType(), Invulnerable.INSTANCE);
-            else store.removeComponentIfExists(ref, Invulnerable.getComponentType());
+            if (player.getGameMode().equals(GameMode.Adventure)) {
+                if (!player.hasPermission(DefPermission.DAMAGE)) store.putComponent(ref, Invulnerable.getComponentType(), Invulnerable.INSTANCE);
+                else store.removeComponentIfExists(ref, Invulnerable.getComponentType());
+            }
         });
     }
 
